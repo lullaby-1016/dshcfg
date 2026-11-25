@@ -1,0 +1,282 @@
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: warning
+ipv6: false
+tcp-concurrent: true
+unified-delay: true
+external-controller: 127.0.0.1:9090
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+
+proxies:
+  - {name: "TW1", type: anytls, server: a54ge.df6h451rh.xin, port: 443, password: "0324fbc29561", sni: "docs.microsoft.com", skip-cert-verify: true, client-fingerprint: chrome, udp: false}
+  - {name: "n01_146_70_242_130_443", type: http, server: 146.70.242.130, port: 443, tls: true, skip-cert-verify: true, udp: false}
+  - {name: "HK2", type: anytls, server: ibsdsf.df6h451rh.xin, port: 443, password: "2902c46c8493", sni: "docs.microsoft.com", skip-cert-verify: true, client-fingerprint: chrome, udp: false}
+  - {name: "HK1", type: anytls, server: 5641sdds.df6h451rh.xin, port: 443, password: "0324fbc29561", sni: "images.ctfassets.net", skip-cert-verify: true, client-fingerprint: chrome, udp: false}
+  - {name: "n03_185_245_84_50_443", type: http, server: 185.245.84.50, port: 443, tls: true, skip-cert-verify: true, password: "None", udp: false}
+  - {name: "n04_167_88_60_242_443", type: http, server: 167.88.60.242, port: 443, tls: true, skip-cert-verify: true, password: "None", udp: false}
+  - {name: "n05_213_177_229_161_443", type: http, server: 213.177.229.161, port: 443, tls: true, skip-cert-verify: true, udp: false}
+  - {name: "n07_146_70_242_146_443", type: http, server: 146.70.242.146, port: 443, tls: true, skip-cert-verify: true, password: "None", udp: false}
+
+proxy-groups:
+  - name: TW_ONLY
+    type: url-test
+    url: "https://www.google.com/generate_204"
+    interval: 180
+    timeout: 4000
+    tolerance: 120
+    lazy: true
+    proxies:
+      - TW1
+      - n01_146_70_242_130_443
+  - name: HK_ONLY
+    type: url-test
+    url: "https://www.google.com/generate_204"
+    interval: 180
+    timeout: 4000
+    tolerance: 120
+    lazy: true
+    proxies:
+      - HK2
+      - HK1
+      - n03_185_245_84_50_443
+      - n04_167_88_60_242_443
+      - n05_213_177_229_161_443
+      - n07_146_70_242_146_443
+  - name: PROXY
+    type: select
+    proxies:
+      - TW_ONLY
+      - HK_ONLY
+  - name: GOOGLE
+    type: select
+    proxies:
+      - TW_ONLY
+      - HK_ONLY
+
+rules:
+  - DOMAIN-SUFFIX,linkedin.com,GOOGLE
+  - DOMAIN-SUFFIX,linkedin.cn,GOOGLE
+  - DOMAIN-SUFFIX,licdn.com,GOOGLE
+  - DOMAIN-SUFFIX,google.com,GOOGLE
+  - DOMAIN-SUFFIX,googleapis.com,GOOGLE
+  - DOMAIN-SUFFIX,gstatic.com,GOOGLE
+  - DOMAIN-SUFFIX,googleusercontent.com,GOOGLE
+  - DOMAIN-SUFFIX,googlevideo.com,GOOGLE
+  - DOMAIN-SUFFIX,ggpht.com,GOOGLE
+  - DOMAIN-SUFFIX,gmail.com,GOOGLE
+  - DOMAIN-SUFFIX,googlemail.com,GOOGLE
+  - DOMAIN-SUFFIX,youtube.com,GOOGLE
+  - DOMAIN-SUFFIX,ytimg.com,GOOGLE
+  - DOMAIN-SUFFIX,youtu.be,GOOGLE
+  - DOMAIN-SUFFIX,goo.gl,PROXY
+  - DOMAIN-SUFFIX,blogger.com,PROXY
+  - DOMAIN-SUFFIX,blogspot.com,PROXY
+  - DOMAIN-SUFFIX,gvt1.com,PROXY
+  - DOMAIN-SUFFIX,gvt2.com,PROXY
+  - DOMAIN-SUFFIX,withgoogle.com,PROXY
+  - DOMAIN-SUFFIX,google-analytics.com,PROXY
+  - DOMAIN-SUFFIX,googletagmanager.com,PROXY
+  - DOMAIN-SUFFIX,recaptcha.net,PROXY
+  - DOMAIN-SUFFIX,firebaseio.com,PROXY
+  - DOMAIN-SUFFIX,firebaseapp.com,PROXY
+  - DOMAIN-SUFFIX,appspot.com,PROXY
+  - DOMAIN-SUFFIX,chrome.com,PROXY
+  - DOMAIN-SUFFIX,chromium.org,PROXY
+  - DOMAIN-SUFFIX,android.com,PROXY
+  - DOMAIN-SUFFIX,g.co,PROXY
+  - DOMAIN-SUFFIX,deepmind.com,PROXY
+  - DOMAIN-SUFFIX,x.com,GOOGLE
+  - DOMAIN-SUFFIX,twitter.com,GOOGLE
+  - DOMAIN-SUFFIX,t.co,GOOGLE
+  - DOMAIN-SUFFIX,twimg.com,GOOGLE
+  - DOMAIN-SUFFIX,twttr.com,PROXY
+  - DOMAIN-SUFFIX,x.ai,PROXY
+  - DOMAIN-SUFFIX,grok.com,PROXY
+  - DOMAIN-SUFFIX,facebook.com,PROXY
+  - DOMAIN-SUFFIX,fb.com,PROXY
+  - DOMAIN-SUFFIX,fbcdn.net,PROXY
+  - DOMAIN-SUFFIX,instagram.com,PROXY
+  - DOMAIN-SUFFIX,cdninstagram.com,PROXY
+  - DOMAIN-SUFFIX,whatsapp.com,PROXY
+  - DOMAIN-SUFFIX,whatsapp.net,PROXY
+  - DOMAIN-SUFFIX,messenger.com,PROXY
+  - DOMAIN-SUFFIX,threads.net,PROXY
+  - DOMAIN-SUFFIX,telegram.org,PROXY
+  - DOMAIN-SUFFIX,t.me,PROXY
+  - DOMAIN-SUFFIX,telegram.me,PROXY
+  - DOMAIN-SUFFIX,telesco.pe,PROXY
+  - DOMAIN-SUFFIX,telegram-cdn.net,PROXY
+  - DOMAIN-SUFFIX,tg.dev,PROXY
+  - DOMAIN-SUFFIX,github.com,PROXY
+  - DOMAIN-SUFFIX,githubusercontent.com,PROXY
+  - DOMAIN-SUFFIX,githubassets.com,PROXY
+  - DOMAIN-SUFFIX,github.io,PROXY
+  - DOMAIN-SUFFIX,ghcr.io,PROXY
+  - DOMAIN-SUFFIX,npmjs.org,PROXY
+  - DOMAIN-SUFFIX,npmjs.com,PROXY
+  - DOMAIN-SUFFIX,pypi.org,PROXY
+  - DOMAIN-SUFFIX,python.org,PROXY
+  - DOMAIN-SUFFIX,nodejs.org,PROXY
+  - DOMAIN-SUFFIX,docker.com,PROXY
+  - DOMAIN-SUFFIX,docker.io,PROXY
+  - DOMAIN-SUFFIX,stackoverflow.com,PROXY
+  - DOMAIN-SUFFIX,gitlab.com,PROXY
+  - DOMAIN-SUFFIX,vercel.app,PROXY
+  - DOMAIN-SUFFIX,netlify.app,PROXY
+  - DOMAIN-SUFFIX,cloudflare.com,PROXY
+  - DOMAIN-SUFFIX,openai.com,GOOGLE
+  - DOMAIN-SUFFIX,chatgpt.com,GOOGLE
+  - DOMAIN-SUFFIX,oaistatic.com,GOOGLE
+  - DOMAIN-SUFFIX,oaiusercontent.com,GOOGLE
+  - DOMAIN-SUFFIX,anthropic.com,PROXY
+  - DOMAIN-SUFFIX,claude.ai,PROXY
+  - DOMAIN-SUFFIX,perplexity.ai,PROXY
+  - DOMAIN-SUFFIX,huggingface.co,PROXY
+  - DOMAIN-SUFFIX,midjourney.com,PROXY
+  - DOMAIN-SUFFIX,netflix.com,PROXY
+  - DOMAIN-SUFFIX,nflxvideo.net,PROXY
+  - DOMAIN-SUFFIX,nflximg.net,PROXY
+  - DOMAIN-SUFFIX,spotify.com,PROXY
+  - DOMAIN-SUFFIX,scdn.co,PROXY
+  - DOMAIN-SUFFIX,soundcloud.com,PROXY
+  - DOMAIN-SUFFIX,twitch.tv,PROXY
+  - DOMAIN-SUFFIX,ttvnw.net,PROXY
+  - DOMAIN-SUFFIX,disneyplus.com,PROXY
+  - DOMAIN-SUFFIX,hulu.com,PROXY
+  - DOMAIN-SUFFIX,primevideo.com,PROXY
+  - DOMAIN-SUFFIX,wikipedia.org,PROXY
+  - DOMAIN-SUFFIX,wikimedia.org,PROXY
+  - DOMAIN-SUFFIX,reddit.com,PROXY
+  - DOMAIN-SUFFIX,redd.it,PROXY
+  - DOMAIN-SUFFIX,redditmedia.com,PROXY
+  - DOMAIN-SUFFIX,discord.com,PROXY
+  - DOMAIN-SUFFIX,discordapp.com,PROXY
+  - DOMAIN-SUFFIX,discord.gg,PROXY
+  - DOMAIN-SUFFIX,medium.com,PROXY
+  - DOMAIN-SUFFIX,quora.com,PROXY
+  - DOMAIN-SUFFIX,notion.so,PROXY
+  - DOMAIN-SUFFIX,slack.com,PROXY
+  - DOMAIN-SUFFIX,zoom.us,PROXY
+  - DOMAIN-SUFFIX,dropbox.com,PROXY
+  - DOMAIN-SUFFIX,steamcommunity.com,PROXY
+  - DOMAIN-SUFFIX,steampowered.com,PROXY
+  - DOMAIN-SUFFIX,steamstatic.com,PROXY
+  - DOMAIN-SUFFIX,epicgames.com,PROXY
+  - DOMAIN-SUFFIX,pinterest.com,PROXY
+  - DOMAIN-SUFFIX,tumblr.com,PROXY
+  - DOMAIN-SUFFIX,imgur.com,PROXY
+  - DOMAIN-SUFFIX,giphy.com,PROXY
+  - DOMAIN-SUFFIX,vimeo.com,PROXY
+  - DOMAIN-SUFFIX,archive.org,PROXY
+  - DOMAIN-SUFFIX,patreon.com,PROXY
+  - DOMAIN-SUFFIX,substack.com,PROXY
+  - DOMAIN-SUFFIX,bit.ly,PROXY
+  - DOMAIN-SUFFIX,tinyurl.com,PROXY
+  - DOMAIN-SUFFIX,speedtest.net,PROXY
+  - DOMAIN-SUFFIX,ipinfo.io,PROXY
+  - DOMAIN-SUFFIX,ip.sb,PROXY
+  - DOMAIN-SUFFIX,duckduckgo.com,PROXY
+  - DOMAIN-SUFFIX,protonmail.com,PROXY
+  - DOMAIN-SUFFIX,proton.me,PROXY
+  - DOMAIN-SUFFIX,tutanota.com,PROXY
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,weixin.qq.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.com,DIRECT
+  - DOMAIN-SUFFIX,qpic.cn,DIRECT
+  - DOMAIN-SUFFIX,qlogo.cn,DIRECT
+  - DOMAIN-SUFFIX,tencent.com,DIRECT
+  - DOMAIN-SUFFIX,myqcloud.com,DIRECT
+  - DOMAIN-SUFFIX,taobao.com,DIRECT
+  - DOMAIN-SUFFIX,tmall.com,DIRECT
+  - DOMAIN-SUFFIX,alicdn.com,DIRECT
+  - DOMAIN-SUFFIX,alipay.com,DIRECT
+  - DOMAIN-SUFFIX,alipayobjects.com,DIRECT
+  - DOMAIN-SUFFIX,aliyun.com,DIRECT
+  - DOMAIN-SUFFIX,aliyuncs.com,DIRECT
+  - DOMAIN-SUFFIX,alibabausercontent.com,DIRECT
+  - DOMAIN-SUFFIX,baidu.com,DIRECT
+  - DOMAIN-SUFFIX,bdstatic.com,DIRECT
+  - DOMAIN-SUFFIX,bdimg.com,DIRECT
+  - DOMAIN-SUFFIX,bcebos.com,DIRECT
+  - DOMAIN-SUFFIX,iqiyi.com,DIRECT
+  - DOMAIN-SUFFIX,163.com,DIRECT
+  - DOMAIN-SUFFIX,126.net,DIRECT
+  - DOMAIN-SUFFIX,netease.com,DIRECT
+  - DOMAIN-SUFFIX,127.net,DIRECT
+  - DOMAIN-SUFFIX,bilibili.com,DIRECT
+  - DOMAIN-SUFFIX,hdslb.com,DIRECT
+  - DOMAIN-SUFFIX,bilivideo.com,DIRECT
+  - DOMAIN-SUFFIX,biliimg.com,DIRECT
+  - DOMAIN-SUFFIX,biliapi.net,DIRECT
+  - DOMAIN-SUFFIX,b23.tv,DIRECT
+  - DOMAIN-SUFFIX,xiaohongshu.com,DIRECT
+  - DOMAIN-SUFFIX,xhscdn.com,DIRECT
+  - DOMAIN-SUFFIX,xhslink.com,DIRECT
+  - DOMAIN-SUFFIX,kuaishou.com,DIRECT
+  - DOMAIN-SUFFIX,gifshow.com,DIRECT
+  - DOMAIN-SUFFIX,kwaicdn.com,DIRECT
+  - DOMAIN-SUFFIX,ksyun.com,DIRECT
+  - DOMAIN-SUFFIX,meituan.com,DIRECT
+  - DOMAIN-SUFFIX,meituan.net,DIRECT
+  - DOMAIN-SUFFIX,dianping.com,DIRECT
+  - DOMAIN-SUFFIX,pinduoduo.com,DIRECT
+  - DOMAIN-SUFFIX,yangkeduo.com,DIRECT
+  - DOMAIN-SUFFIX,jd.com,DIRECT
+  - DOMAIN-SUFFIX,360buyimg.com,DIRECT
+  - DOMAIN-SUFFIX,weibo.com,DIRECT
+  - DOMAIN-SUFFIX,weibo.cn,DIRECT
+  - DOMAIN-SUFFIX,sinaimg.cn,DIRECT
+  - DOMAIN-SUFFIX,zhihu.com,DIRECT
+  - DOMAIN-SUFFIX,zhimg.com,DIRECT
+  - DOMAIN-SUFFIX,douyin.com,DIRECT
+  - DOMAIN-SUFFIX,douyinvod.com,DIRECT
+  - DOMAIN-SUFFIX,douyincdn.com,DIRECT
+  - DOMAIN-SUFFIX,douyinpic.com,DIRECT
+  - DOMAIN-SUFFIX,douyinstatic.com,DIRECT
+  - DOMAIN-SUFFIX,pstatp.com,DIRECT
+  - DOMAIN-SUFFIX,byteimg.com,DIRECT
+  - DOMAIN-SUFFIX,bytedance.com,DIRECT
+  - DOMAIN-SUFFIX,snssdk.com,DIRECT
+  - DOMAIN-SUFFIX,amemv.com,DIRECT
+  - DOMAIN-SUFFIX,ixigua.com,DIRECT
+  - DOMAIN-SUFFIX,toutiao.com,DIRECT
+  - DOMAIN-SUFFIX,zjcdn.com,DIRECT
+  - DOMAIN-SUFFIX,ctrip.com,DIRECT
+  - DOMAIN-SUFFIX,qunar.com,DIRECT
+  - DOMAIN-SUFFIX,trip.com,DIRECT
+  - DOMAIN-SUFFIX,360.cn,DIRECT
+  - DOMAIN-SUFFIX,so.com,DIRECT
+  - DOMAIN-SUFFIX,sohu.com,DIRECT
+  - DOMAIN-SUFFIX,58.com,DIRECT
+  - DOMAIN-SUFFIX,smzdm.com,DIRECT
+  - DOMAIN-SUFFIX,ximalaya.com,DIRECT
+  - DOMAIN-SUFFIX,xmcdn.com,DIRECT
+  - DOMAIN-SUFFIX,migu.cn,DIRECT
+  - DOMAIN-SUFFIX,wps.cn,DIRECT
+  - DOMAIN-SUFFIX,iflytek.com,DIRECT
+  - DOMAIN-SUFFIX,12306.cn,DIRECT
+  - DOMAIN-SUFFIX,mi.com,DIRECT
+  - DOMAIN-SUFFIX,xiaomi.com,DIRECT
+  - DOMAIN-SUFFIX,miui.com,DIRECT
+  - DOMAIN-SUFFIX,amap.com,DIRECT
+  - DOMAIN-SUFFIX,autonavi.com,DIRECT
+  - DOMAIN-SUFFIX,huawei.com,DIRECT
+  - DOMAIN-SUFFIX,hicloud.com,DIRECT
+  - DOMAIN-SUFFIX,gov.cn,DIRECT
+  - DOMAIN-SUFFIX,edu.cn,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - MATCH,DIRECT
