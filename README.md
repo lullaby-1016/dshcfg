@@ -1,0 +1,2 @@
+# dshcfg
+clash cfg
